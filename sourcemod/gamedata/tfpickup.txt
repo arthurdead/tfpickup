@@ -1,0 +1,162 @@
+"Games"
+{
+	"tf"
+	{
+		"Offsets"
+		{
+			"CBasePlayer::PickupObject"
+			{
+				"linux" "413"
+			}
+			"CBaseEntity::PostConstructor"
+			{
+				"linux" "27"
+			}
+			"CBaseEntity::VPhysicsGetObjectList"
+			{
+				"linux" "165"
+			}
+			"CBaseEntity::EyeAngles"
+			{
+				"linux" "132"
+			}
+			"CBaseEntity::EyePosition"
+			{
+				"linux" "131"
+			}
+			"CBaseEntity::SetParent"
+			{
+				"linux" "35"
+			}
+			"CBaseEntity::WorldSpaceCenter"
+			{
+				"linux" "150"
+			}
+			"CBaseEntity::Use"
+			{
+				"linux" "98"
+			}
+			"CBasePlayer::Weapon_ShootPosition"
+			{
+				"linux" "269"
+			}
+			"CBaseEntity::OnControls"
+			{
+				"linux" "79"
+			}
+			"CBaseEntity::VPhysicsUpdate"
+			{
+				"linux" "158"
+			}
+			"CBaseEntity::VPhysicsShadowUpdate"
+			{
+				"linux" "161"
+			}
+			"CBaseEntity::OnRestore"
+			{
+				"linux" "45"
+			}
+			"CBaseCombatWeapon::Holster"
+			{
+				"linux" "261"
+			}
+			"CBaseCombatWeapon::Deploy"
+			{
+				"linux" "260"
+			}
+			"CBaseCombatWeapon::CanHolster"
+			{
+				"linux" "257"
+			}
+			"CBasePlayer::GetHeldObjectMass"
+			{
+				"linux" "415"
+			}
+			"CBasePlayer::ForceDropOfCarriedPhysObjects"
+			{
+				"linux" "414"
+			}
+			"CBreakableProp::HasInteraction"
+			{
+				"linux" "250"
+			}
+			"sizeof(CBaseEntity)"
+			{
+				"linux" "876"
+			}
+		}
+		"Signatures"
+		{
+			"CBaseEntity::CBaseEntity"
+			{
+				"library" "server"
+				"linux" "@_ZN11CBaseEntityC1Eb"
+			}
+			"CBaseEntity::HasNPCsOnIt"
+			{
+				"library" "server"
+				"linux" "@_ZN11CBaseEntity11HasNPCsOnItEv"
+			}
+			"CBasePlayer::CanPickupObject"
+			{
+				"library" "server"
+				"linux" "@_ZN11CBasePlayer15CanPickupObjectEP11CBaseEntityff"
+			}
+			"CBaseCombatCharacter::SwitchToNextBestWeapon"
+			{
+				"library" "server"
+				"linux" "@_ZN20CBaseCombatCharacter22SwitchToNextBestWeaponEP17CBaseCombatWeapon"
+			}
+			"Pickup_GetPreferredCarryAngles"
+			{
+				"library" "server"
+				"linux" "@_Z30Pickup_GetPreferredCarryAnglesP11CBaseEntityP11CBasePlayerR11matrix3x4_tR6QAngle"
+			}
+			"Pickup_OnPhysGunDrop"
+			{
+				"library" "server"
+				"linux" "@_Z20Pickup_OnPhysGunDropP11CBaseEntityP11CBasePlayer13PhysGunDrop_t"
+			}
+			"Pickup_OnPhysGunPickup"
+			{
+				"library" "server"
+				"linux" "@_Z22Pickup_OnPhysGunPickupP11CBaseEntityP11CBasePlayer15PhysGunPickup_t"
+			}
+			"PhysComputeSlideDirection"
+			{
+				"library" "server"
+				"linux" "@_Z25PhysComputeSlideDirectionP14IPhysicsObjectRK6VectorS3_PS1_S4_f"
+			}
+			"PhysForceClearVelocity"
+			{
+				"library" "server"
+				"linux" "@_Z22PhysForceClearVelocityP14IPhysicsObject"
+			}
+			"StandardFilterRules"
+			{
+				"library" "server"
+				"linux" "@_Z19StandardFilterRulesP13IHandleEntityi"
+			}
+			"CTraceFilterSimple::ShouldHitEntity"
+			{
+				"library" "server"
+				"linux" "@_ZN18CTraceFilterSimple15ShouldHitEntityEP13IHandleEntityi"
+			}
+			"CCollisionProperty::CollisionToWorldTransform"
+			{
+				"library" "server"
+				"linux" "@_ZNK18CCollisionProperty25CollisionToWorldTransformEv"
+			}
+			"PhysicsImpactSound"
+			{
+				"library" "server"
+				"linux" "@_Z18PhysicsImpactSoundP11CBaseEntityP14IPhysicsObjectiiiff"
+			}
+			"PhysRemoveShadow"
+			{
+				"library" "server"
+				"linux" "@_Z16PhysRemoveShadowP11CBaseEntity"
+			}
+		}
+	}
+}
