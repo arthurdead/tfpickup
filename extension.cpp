@@ -1463,8 +1463,8 @@ public:
 	
 		SourceHook::SetMemAccess(vtable, sizeof(void **), SH_MEM_READ|SH_MEM_WRITE|SH_MEM_EXEC);
 		
-		bytes->getvars().dtorPtr = vtable[0];
-		vtable[0] = func_to_void(&CPlayerPickupController::dtor);
+		bytes->getvars().dtorPtr = vtable[1];
+		vtable[1] = func_to_void(&CPlayerPickupController::dtor);
 		
 		vtable[CBaseEntityOnControls] = func_to_void(&CPlayerPickupController::HookOnControls);
 		vtable[CBaseEntityVPhysicsUpdate] = func_to_void(&CPlayerPickupController::HookVPhysicsUpdate);
