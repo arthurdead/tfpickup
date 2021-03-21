@@ -135,10 +135,6 @@ int CBaseEntityUse = -1;
 void *CCollisionPropertyCollisionToWorldTransform = nullptr;
 void *PhysicsImpactSoundPtr = nullptr;
 void *PhysRemoveShadowPtr = nullptr;
-int CBaseEntityOnControls = -1;
-int CBaseEntityVPhysicsUpdate = -1;
-int CBaseEntityVPhysicsShadowUpdate = -1;
-int CBaseEntityOnRestore = -1;
 
 int sizeofCBaseEntity = -1;
 
@@ -1423,6 +1419,13 @@ float CGrabController::GetSavedMass( IPhysicsObject *pObject )
 
 #include <sourcehook/sh_memory.h>
 
+SH_DECL_MANUALHOOK0_void(GenericDtor, 1, 0, 0)
+SH_DECL_MANUALHOOK1(OnControls, 0, 0, 0, bool, CBaseEntity *)
+SH_DECL_MANUALHOOK1_void(VPhysicsUpdate, 0, 0, 0, IPhysicsObject *)
+SH_DECL_MANUALHOOK1_void(VPhysicsShadowUpdate, 0, 0, 0, IPhysicsObject *)
+SH_DECL_MANUALHOOK0_void(OnRestore, 0, 0, 0)
+SH_DECL_MANUALHOOK4_void(Use, 0, 0, 0, CBaseEntity *, CBaseEntity *, USE_TYPE, float)
+
 class CPlayerPickupController : public CBaseEntity
 {
 public:
@@ -1430,7 +1433,6 @@ public:
 	{
 		CGrabController m_grabController{};
 		CBasePlayer *m_pPlayer = nullptr;
-		void *dtorPtr = nullptr;
 	};
 	
 	unsigned char *vars_ptr()
@@ -1438,19 +1440,24 @@ public:
 	vars_t &getvars()
 	{ return *(vars_t *)vars_ptr(); }
 	
-	bool HookOnControls(CBaseEntity *) { return true; }
-	void HookVPhysicsUpdate(IPhysicsObject *) { }
-	void HookVPhysicsShadowUpdate(IPhysicsObject *) { }
-	void HookOnRestore() { getvars().m_grabController.OnRestore(); }
+	bool HookOnControls(CBaseEntity *) { RETURN_META_VALUE(MRES_SUPERCEDE, true); }
+	void HookVPhysicsUpdate(IPhysicsObject *) { RETURN_META(MRES_SUPERCEDE); }
+	void HookVPhysicsShadowUpdate(IPhysicsObject *) { RETURN_META(MRES_SUPERCEDE); }
+	void HookOnRestore() { getvars().m_grabController.OnRestore(); RETURN_META(MRES_SUPERCEDE); }
 	void HookUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 	
 	void dtor()
 	{
-		void *dtorPtr = getvars().dtorPtr;
-	
 		getvars().~vars_t();
 		
-		call_mfunc<void>(this, dtorPtr);
+		SH_REMOVE_MANUALHOOK(GenericDtor, this, SH_MEMBER(this, &CPlayerPickupController::dtor), false);
+		SH_REMOVE_MANUALHOOK(OnControls, this, SH_MEMBER(this, &CPlayerPickupController::HookOnControls), false);
+		SH_REMOVE_MANUALHOOK(VPhysicsUpdate, this, SH_MEMBER(this, &CPlayerPickupController::HookVPhysicsUpdate), false);
+		SH_REMOVE_MANUALHOOK(VPhysicsShadowUpdate, this, SH_MEMBER(this, &CPlayerPickupController::HookVPhysicsShadowUpdate), false);
+		SH_REMOVE_MANUALHOOK(OnRestore, this, SH_MEMBER(this, &CPlayerPickupController::HookOnRestore), false);
+		SH_REMOVE_MANUALHOOK(Use, this, SH_MEMBER(this, &CPlayerPickupController::HookUse), false);
+		
+		RETURN_META(MRES_IGNORED);
 	}
 	
 	static CPlayerPickupController *create()
@@ -1459,19 +1466,13 @@ public:
 		call_mfunc<void, CBaseEntity, bool>(bytes, CBaseEntityCTOR, true);
 		new (bytes->vars_ptr()) vars_t();
 		
-		void **vtable = *(void ***)bytes;
-	
-		SourceHook::SetMemAccess(vtable, sizeof(void **), SH_MEM_READ|SH_MEM_WRITE|SH_MEM_EXEC);
+		SH_ADD_MANUALHOOK(GenericDtor, bytes, SH_MEMBER(bytes, &CPlayerPickupController::dtor), false);
+		SH_ADD_MANUALHOOK(OnControls, bytes, SH_MEMBER(bytes, &CPlayerPickupController::HookOnControls), false);
+		SH_ADD_MANUALHOOK(VPhysicsUpdate, bytes, SH_MEMBER(bytes, &CPlayerPickupController::HookVPhysicsUpdate), false);
+		SH_ADD_MANUALHOOK(VPhysicsShadowUpdate, bytes, SH_MEMBER(bytes, &CPlayerPickupController::HookVPhysicsShadowUpdate), false);
+		SH_ADD_MANUALHOOK(OnRestore, bytes, SH_MEMBER(bytes, &CPlayerPickupController::HookOnRestore), false);
+		SH_ADD_MANUALHOOK(Use, bytes, SH_MEMBER(bytes, &CPlayerPickupController::HookUse), false);
 		
-		bytes->getvars().dtorPtr = vtable[1];
-		vtable[1] = func_to_void(&CPlayerPickupController::dtor);
-		
-		vtable[CBaseEntityOnControls] = func_to_void(&CPlayerPickupController::HookOnControls);
-		vtable[CBaseEntityVPhysicsUpdate] = func_to_void(&CPlayerPickupController::HookVPhysicsUpdate);
-		vtable[CBaseEntityVPhysicsShadowUpdate] = func_to_void(&CPlayerPickupController::HookVPhysicsShadowUpdate);
-		vtable[CBaseEntityOnRestore] = func_to_void(&CPlayerPickupController::HookOnRestore);
-		vtable[CBaseEntityUse] = func_to_void(&CPlayerPickupController::HookUse);
-
 		return bytes;
 	}
 	
@@ -1840,7 +1841,7 @@ void CPlayerPickupController::HookUse( CBaseEntity *pActivator, CBaseEntity *pCa
 		if ( !pAttached || useType == USE_OFF || (getvars().m_pPlayer->GetButtons() & IN_ATTACK2) || getvars().m_grabController.ComputeError() > 12 )
 		{
 			Shutdown();
-			return;
+			RETURN_META(MRES_SUPERCEDE);
 		}
 		
 		//Adrian: Oops, our object became motion disabled, let go!
@@ -1848,7 +1849,7 @@ void CPlayerPickupController::HookUse( CBaseEntity *pActivator, CBaseEntity *pCa
 		if ( pPhys && pPhys->IsMoveable() == false )
 		{
 			Shutdown();
-			return;
+			RETURN_META(MRES_SUPERCEDE);
 		}
 
 #if STRESS_TEST
@@ -1857,7 +1858,7 @@ void CPlayerPickupController::HookUse( CBaseEntity *pActivator, CBaseEntity *pCa
 		if ( stress.exertedStress > 250 )
 		{
 			Shutdown();
-			return;
+			RETURN_META(MRES_SUPERCEDE);
 		}
 #endif
 		// +ATTACK will throw phys objects
@@ -1878,7 +1879,7 @@ void CPlayerPickupController::HookUse( CBaseEntity *pActivator, CBaseEntity *pCa
 				pPhys->ApplyTorqueCenter( aVel );
 			}
 
-			return;
+			RETURN_META(MRES_SUPERCEDE);
 		}
 
 		if ( useType == USE_SET )
@@ -1887,6 +1888,8 @@ void CPlayerPickupController::HookUse( CBaseEntity *pActivator, CBaseEntity *pCa
 			getvars().m_grabController.UpdateObject( getvars().m_pPlayer, 12 );
 		}
 	}
+	
+	RETURN_META(MRES_SUPERCEDE);
 }
 
 CBaseEntity *GetPlayerHeldEntity( CBasePlayer *pPlayer )
@@ -2071,22 +2074,30 @@ bool Sample::SDK_OnLoad(char *error, size_t maxlen, bool late)
 	
 	CDetourManager::Init(g_pSM->GetScriptingEngine(), g_pGameConf);
 	
+	g_pGameConf->GetOffset("CBaseEntity::Use", &CBaseEntityUse);
+	SH_MANUALHOOK_RECONFIGURE(OnRestore, CBaseEntityUse, 0, 0);
+	
 	int offset = -1;
 	g_pGameConf->GetOffset("CBasePlayer::PickupObject", &offset);
 	SH_MANUALHOOK_RECONFIGURE(PickupObject, offset, 0, 0);
-	
-	g_pGameConf->GetOffset("CBaseEntity::Use", &CBaseEntityUse);
-	
-	g_pGameConf->GetOffset("CBaseEntity::OnControls", &CBaseEntityOnControls);
-	g_pGameConf->GetOffset("CBaseEntity::VPhysicsUpdate", &CBaseEntityVPhysicsUpdate);
-	g_pGameConf->GetOffset("CBaseEntity::VPhysicsShadowUpdate", &CBaseEntityVPhysicsShadowUpdate);
-	g_pGameConf->GetOffset("CBaseEntity::OnRestore", &CBaseEntityOnRestore);
 	
 	g_pGameConf->GetOffset("CBasePlayer::GetHeldObjectMass", &offset);
 	SH_MANUALHOOK_RECONFIGURE(GetHeldObjectMass, offset, 0, 0);
 	
 	g_pGameConf->GetOffset("CBasePlayer::ForceDropOfCarriedPhysObjects", &offset);
 	SH_MANUALHOOK_RECONFIGURE(ForceDropOfCarriedPhysObjects, offset, 0, 0);
+	
+	g_pGameConf->GetOffset("CBasePlayer::OnControls", &offset);
+	SH_MANUALHOOK_RECONFIGURE(OnControls, offset, 0, 0);
+	
+	g_pGameConf->GetOffset("CBasePlayer::VPhysicsUpdate", &offset);
+	SH_MANUALHOOK_RECONFIGURE(VPhysicsUpdate, offset, 0, 0);
+	
+	g_pGameConf->GetOffset("CBasePlayer::VPhysicsShadowUpdate", &offset);
+	SH_MANUALHOOK_RECONFIGURE(VPhysicsShadowUpdate, offset, 0, 0);
+	
+	g_pGameConf->GetOffset("CBasePlayer::OnRestore", &offset);
+	SH_MANUALHOOK_RECONFIGURE(OnRestore, offset, 0, 0);
 	
 	pCanPickupObject = DETOUR_CREATE_STATIC(DetourCanPickupObject, "CBasePlayer::CanPickupObject")
 	pCanPickupObject->EnableDetour();
