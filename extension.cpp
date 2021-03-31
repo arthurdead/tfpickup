@@ -225,8 +225,11 @@ R call_vfunc(T *pThisPtr, size_t offset, Args ...args)
 #include <SoundEmitterSystem/isoundemittersystembase.h>
 #include <vphysics/friction.h>
 #define DECLARE_PREDICTABLE()
-#include <shareddefs.h>
 #include <mathlib/vmatrix.h>
+#ifndef FMTFUNCTION
+#define FMTFUNCTION(...)
+#endif
+#include <shareddefs.h>
 #include <util.h>
 #include <collisionproperty.h>
 #include <engine/ivmodelinfo.h>
