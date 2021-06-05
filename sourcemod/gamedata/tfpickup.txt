@@ -157,6 +157,11 @@
 				"library" "server"
 				"linux" "@_Z16PhysRemoveShadowP11CBaseEntity"
 			}
+			"CBaseEntity::CalcAbsolutePosition"
+			{
+				"library" "server"
+				"linux" "@_ZN11CBaseEntity20CalcAbsolutePositionEv"
+			}
 		}
 	}
 }

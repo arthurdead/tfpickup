@@ -2078,7 +2078,7 @@ bool Sample::SDK_OnLoad(char *error, size_t maxlen, bool late)
 	CDetourManager::Init(g_pSM->GetScriptingEngine(), g_pGameConf);
 	
 	g_pGameConf->GetOffset("CBaseEntity::Use", &CBaseEntityUse);
-	SH_MANUALHOOK_RECONFIGURE(OnRestore, CBaseEntityUse, 0, 0);
+	SH_MANUALHOOK_RECONFIGURE(Use, CBaseEntityUse, 0, 0);
 	
 	int offset = -1;
 	g_pGameConf->GetOffset("CBasePlayer::PickupObject", &offset);
@@ -2090,16 +2090,16 @@ bool Sample::SDK_OnLoad(char *error, size_t maxlen, bool late)
 	g_pGameConf->GetOffset("CBasePlayer::ForceDropOfCarriedPhysObjects", &offset);
 	SH_MANUALHOOK_RECONFIGURE(ForceDropOfCarriedPhysObjects, offset, 0, 0);
 	
-	g_pGameConf->GetOffset("CBasePlayer::OnControls", &offset);
+	g_pGameConf->GetOffset("CBaseEntity::OnControls", &offset);
 	SH_MANUALHOOK_RECONFIGURE(OnControls, offset, 0, 0);
 	
-	g_pGameConf->GetOffset("CBasePlayer::VPhysicsUpdate", &offset);
+	g_pGameConf->GetOffset("CBaseEntity::VPhysicsUpdate", &offset);
 	SH_MANUALHOOK_RECONFIGURE(VPhysicsUpdate, offset, 0, 0);
 	
-	g_pGameConf->GetOffset("CBasePlayer::VPhysicsShadowUpdate", &offset);
+	g_pGameConf->GetOffset("CBaseEntity::VPhysicsShadowUpdate", &offset);
 	SH_MANUALHOOK_RECONFIGURE(VPhysicsShadowUpdate, offset, 0, 0);
 	
-	g_pGameConf->GetOffset("CBasePlayer::OnRestore", &offset);
+	g_pGameConf->GetOffset("CBaseEntity::OnRestore", &offset);
 	SH_MANUALHOOK_RECONFIGURE(OnRestore, offset, 0, 0);
 	
 	pCanPickupObject = DETOUR_CREATE_STATIC(DetourCanPickupObject, "CBasePlayer::CanPickupObject")
