@@ -241,6 +241,8 @@ ConVar physcannon_maxmass( "physcannon_maxmass", "250", FCVAR_REPLICATED | FCVAR
 ConVar hl2_normspeed( "hl2_normspeed", "190" );
 ConVar g_debug_physcannon( "g_debug_physcannon", "0" );
 ConVar player_throwforce( "player_throwforce", "1000" );
+ConVar pickup_masslimit( "pickup_masslimit", "35" );
+ConVar pickup_sizelimit( "pickup_sizelimit", "128" );
 
 class IGameSystem;
 
@@ -450,7 +452,11 @@ public:
 	{
 		if(ClassnameIs("physics_prop") ||
 			ClassnameIs("prop_physics") ||
-			ClassnameIs("prop_physics_override")) {
+			ClassnameIs("prop_physics_override") ||
+			ClassnameIs("prop_physics_multiplayer") ||
+			ClassnameIs("prop_physics_respawnable") ||
+			ClassnameIs("prop_sphere") ||
+			ClassnameIs("prop_soccer_ball")) {
 			return this;
 		} else {
 			return nullptr;
@@ -470,7 +476,8 @@ public:
 	CBaseEntity *IsRagdoll()
 	{
 		if(ClassnameIs("prop_ragdoll") ||
-			ClassnameIs("physics_prop_ragdoll")) {
+			ClassnameIs("physics_prop_ragdoll") ||
+			ClassnameIs("prop_ragdoll_attached")) {
 			return this;
 		} else {
 			return nullptr;
@@ -1248,7 +1255,7 @@ void CGrabController::AttachEntity( CBasePlayer *pPlayer, CBaseEntity *pEntity, 
 		VectorITransform( pEntity->WorldSpaceCenter(), pEntity->EntityToWorldTransform(), m_attachedPositionObjectSpace );
 	}
 	
-#define GCC_LINKER_BEING_STUPID
+//#define GCC_LINKER_BEING_STUPID
 
 	// If it's a prop, see if it has desired carry angles
 	CPhysicsProp *pProp = pEntity->IsPhysicsProp();
@@ -1953,7 +1960,7 @@ void DoPickupObject(CBasePlayer *pPlayer, CBaseEntity *pObject, bool bLimitMassA
 	
 	if ( bLimitMassAndSize == true )
 	{
-		if ( CanPickupObject( pObject, 35, 128 ) == false ) {
+		if ( CanPickupObject( pObject, pickup_masslimit.GetFloat(), pickup_sizelimit.GetFloat() ) == false ) {
 			return;
 		}
 	}

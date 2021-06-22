@@ -6,7 +6,7 @@
 		{
 			"CBasePlayer::PickupObject"
 			{
-				"linux" "413"
+				"linux" "414"
 			}
 			"CBaseEntity::PostConstructor"
 			{
@@ -38,7 +38,7 @@
 			}
 			"CBasePlayer::Weapon_ShootPosition"
 			{
-				"linux" "269"
+				"linux" "270"
 			}
 			"CBaseEntity::OnControls"
 			{
@@ -58,27 +58,27 @@
 			}
 			"CBaseCombatWeapon::Holster"
 			{
-				"linux" "261"
+				"linux" "262"
 			}
 			"CBaseCombatWeapon::Deploy"
 			{
-				"linux" "260"
+				"linux" "261"
 			}
 			"CBaseCombatWeapon::CanHolster"
 			{
-				"linux" "257"
+				"linux" "258"
 			}
 			"CBasePlayer::GetHeldObjectMass"
 			{
-				"linux" "415"
+				"linux" "416"
 			}
 			"CBasePlayer::ForceDropOfCarriedPhysObjects"
 			{
-				"linux" "414"
+				"linux" "415"
 			}
 			"CBreakableProp::HasInteraction"
 			{
-				"linux" "250"
+				"linux" "251"
 			}
 			"sizeof(CBaseEntity)"
 			{
