@@ -135,6 +135,7 @@ int CBaseEntityUse = -1;
 void *CCollisionPropertyCollisionToWorldTransform = nullptr;
 void *PhysicsImpactSoundPtr = nullptr;
 void *PhysRemoveShadowPtr = nullptr;
+void *CBaseEntityCollisionRulesChangedPtr = nullptr;
 
 int sizeofCBaseEntity = -1;
 
@@ -422,10 +423,18 @@ public:
 		
 		return *(int *)((unsigned char *)this + m_collisionGroupOffset);
 	}
+
+	void CollisionRulesChanged()
+	{
+		call_mfunc<void, CBaseEntity>(this, CBaseEntityCollisionRulesChangedPtr);
+	}
 	
 	void SetCollisionGroup(int g)
 	{
-		GetCollisionGroup() = g;
+		if(GetCollisionGroup() != g) {
+			GetCollisionGroup() = g;
+			CollisionRulesChanged();
+		}
 	}
 	
 	const Vector &WorldSpaceCenter()
@@ -2139,6 +2148,7 @@ bool Sample::SDK_OnLoad(char *error, size_t maxlen, bool late)
 	g_pGameConf->GetMemSig("CCollisionProperty::CollisionToWorldTransform", &CCollisionPropertyCollisionToWorldTransform);
 	g_pGameConf->GetMemSig("PhysicsImpactSound", &PhysicsImpactSoundPtr);
 	g_pGameConf->GetMemSig("PhysRemoveShadow", &PhysRemoveShadowPtr);
+	g_pGameConf->GetMemSig("CBaseEntity::CollisionRulesChanged", &CBaseEntityCollisionRulesChangedPtr);
 	
 	sm_sendprop_info_t info{};
 	gamehelpers->FindSendPropInfo("CBaseEntity", "m_hGroundEntity", &info);
