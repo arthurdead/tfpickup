@@ -9,6 +9,7 @@ builder.SetBuildFolder('package')
 folder_list = [
   'addons/sourcemod/extensions',
   #'addons/sourcemod/scripting/include',
+  'addons/sourcemod/scripting',
   'addons/sourcemod/gamedata',
   #'addons/sourcemod/configs',
 ]
@@ -36,6 +37,10 @@ def CopyFiles(src, dest, files):
 # GameData files
 CopyFiles('sourcemod/gamedata', 'addons/sourcemod/gamedata',
   [ 'tfpickup.txt' ]
+)
+
+CopyFiles('sourcemod/scripting', 'addons/sourcemod/scripting',
+  [ 'tfpickup.sp' ]
 )
 
 CopyFiles('sourcemod/extensions', 'addons/sourcemod/extensions',

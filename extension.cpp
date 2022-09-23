@@ -1264,19 +1264,12 @@ void CGrabController::AttachEntity( CBasePlayer *pPlayer, CBaseEntity *pEntity, 
 		VectorITransform( pEntity->WorldSpaceCenter(), pEntity->EntityToWorldTransform(), m_attachedPositionObjectSpace );
 	}
 	
-//#define GCC_LINKER_BEING_STUPID
-
 	// If it's a prop, see if it has desired carry angles
 	CPhysicsProp *pProp = pEntity->IsPhysicsProp();
 	if ( pProp )
 	{
-#ifndef GCC_LINKER_BEING_STUPID
 		m_bHasPreferredCarryAngles = pProp->GetPropDataAngles( "preferred_carryangles", m_vecPreferredCarryAngles );
 		m_flDistanceOffset = pProp->GetCarryDistanceOffset();
-#else
-		m_bHasPreferredCarryAngles = false;
-		m_flDistanceOffset = 0;
-#endif
 	}
 	else
 	{
