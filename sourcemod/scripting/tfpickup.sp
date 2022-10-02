@@ -2,6 +2,15 @@
 #include <sdkhooks>
 #include <vphysics>
 
+public Plugin myinfo = 
+{
+	name = "tfpickup",
+	author = "Arthurdead",
+	description = "",
+	version = "0.1.0.0",
+	url = ""
+};
+
 //TODO!!! pickup tf_dropped_weapon, lunchboxes
 
 public void OnEntityCreated(int entity, const char[] classname)
